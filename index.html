@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accent Trainer — Practice English with 5 Accents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f8f6;
+      --surface: #ffffff;
+      --surface2: #f3f2ef;
+      --border: rgba(0,0,0,0.1);
+      --border2: rgba(0,0,0,0.18);
+      --text: #1a1a1a;
+      --text2: #5c5c5c;
+      --text3: #999;
+      --blue: #185FA5;
+      --blue-bg: #E6F1FB;
+      --blue-text: #0C447C;
+      --radius: 10px;
+      --radius-lg: 16px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111110;
+        --surface: #1c1c1a;
+        --surface2: #252523;
+        --border: rgba(255,255,255,0.1);
+        --border2: rgba(255,255,255,0.2);
+        --text: #f0ede8;
+        --text2: #a8a49e;
+        --text3: #666;
+        --blue: #378ADD;
+        --blue-bg: #042C53;
+        --blue-text: #85B7EB;
+      }
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 1.5rem 2rem 1rem;
+      border-bottom: 0.5px solid var(--border);
+      background: var(--surface);
+    }
+
+    header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    header p {
+      font-size: 13px;
+      color: var(--text2);
+      margin-top: 3px;
+    }
+
+    .main {
+      flex: 1;
+      max-width: 760px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 1.5rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .accent-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 500px) {
+      .accent-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .accent-btn {
+      padding: 12px 8px;
+      border: 0.5px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .accent-btn:hover { background: var(--surface2); border-color: var(--border2); }
+
+    .accent-btn.active {
+      border: 2px solid var(--blue);
+      background: var(--blue-bg);
+    }
+
+    .accent-flag { font-size: 24px; display: block; margin-bottom: 5px; }
+    .accent-label { font-size: 12px; font-weight: 500; color: var(--text); display: block; }
+    .accent-sub { font-size: 11px; color: var(--text2); display: block; margin-top: 2px; }
+
+    .tip-box {
+      padding: 10px 14px;
+      background: var(--blue-bg);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 13px;
+      color: var(--blue-text);
+      line-height: 1.5;
+    }
+
+    .quick-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .quick-label {
+      font-size: 12px;
+      color: var(--text3);
+    }
+
+    .quick-btn {
+      padding: 5px 12px;
+      font-size: 12px;
+      border: 0.5px solid var(--border2);
+      border-radius: 20px;
+      background: var(--surface);
+      color: var(--text2);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.12s;
+    }
+
+    .quick-btn:hover { background: var(--surface2); color: var(--text); }
+
+    .chat-area {
+      background: var(--surface2);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      min-height: 320px;
+      max-height: 420px;
+      overflow-y: auto;
+      border: 0.5px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      scroll-behavior: smooth;
+    }
+
+    .msg { display: flex; gap: 8px; align-items: flex-start; }
+    .msg.user { flex-direction: row-reverse; }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .bubble {
+      padding: 10px 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      max-width: 78%;
+    }
+
+    .msg.ai .bubble {
+      background: var(--surface);
+      border: 0.5px solid var(--border);
+      border-radius: 4px 14px 14px 14px;
+      color: var(--text);
+    }
+
+    .msg.user .bubble {
+      background: var(--blue);
+      color: #fff;
+      border-radius: 14px 4px 14px 14px;
+    }
+
+    .speak-btn {
+      margin-top: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      border: 0.5px solid var(--border2);
+      border-radius: 20px;
+      background: var(--surface2);
+      color: var(--text2);
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.12s;
+    }
+
+    .speak-btn:hover { background: var(--surface); color: var(--text); }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 11px 14px;
+      border: 0.5px solid var(--border2);
+      border-radius: var(--radius-lg);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      resize: none;
+      min-height: 44px;
+      max-height: 110px;
+      background: var(--surface);
+      color: var(--text);
+      line-height: 1.5;
+      transition: border-color 0.15s;
+    }
+
+    textarea:focus { outline: none; border-color: var(--blue); }
+    textarea::placeholder { color: var(--text3); }
+
+    .send-btn {
+      padding: 0 20px;
+      height: 44px;
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity 0.15s;
+    }
+
+    .send-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .send-btn:hover:not(:disabled) { opacity: 0.88; }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text2);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #1D9E75;
+      flex-shrink: 0;
+    }
+
+    .dot.loading {
+      background: #EF9F27;
+      animation: pulse 0.9s infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 10px 14px;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      background: var(--text3);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+
+    .typing span:nth-child(2) { animation-delay: 0.15s; }
+    .typing span:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+    footer {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text3);
+      padding: 1rem;
+      border-top: 0.5px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🎙️ Accent Trainer</h1>
+  <p>Practice English listening with 5 real-world accents — powered by AI</p>
+</header>
+
+<main class="main">
+
+  <div class="accent-grid" id="accent-grid">
+    <button class="accent-btn active" onclick="selectAccent(this,'indian')">
+      <span class="accent-flag">🇮🇳</span>
+      <span class="accent-label">Indian</span>
+      <span class="accent-sub">Ấn Độ</span>
+    </button>
+    <button class="accent-btn" onclick="selectAccent(this,'singlish')">
+      <span class="accent-flag">🇸🇬</span>
+      <span class="accent-label">Singlish</span>
+      <span class="accent-sub">Singapore</span>
+    </button>
+    <button class="accent-btn" onclick="selectAccent(this,'british')">
+      <span class="accent-flag">🇬🇧</span>
+      <span class="accent-label">British</span>
+      <span class="accent-sub">Anh</span>
+    </button>
+    <button class="accent-btn" onclick="selectAccent(this,'american')">
+      <span class="accent-flag">🇺🇸</span>
+      <span class="accent-label">American</span>
+      <span class="accent-sub">Mỹ</span>
+    </button>
+    <button class="accent-btn" onclick="selectAccent(this,'australian')">
+      <span class="accent-flag">🇦🇺</span>
+      <span class="accent-label">Australian</span>
+      <span class="accent-sub">Úc</span>
+    </button>
+  </div>
+
+  <div class="tip-box" id="tip-box">
+    🇮🇳 <strong>Indian English:</strong> Hay nói "only" cuối câu, "isn't it?" xác nhận, phát âm rõ từng âm tiết, rất lịch sự và nhiệt tình.
+  </div>
+
+  <div class="quick-wrap">
+    <span class="quick-label">Thử hỏi:</span>
+    <button class="quick-btn" onclick="quickSend('How are you today?')">How are you?</button>
+    <button class="quick-btn" onclick="quickSend('Tell me about your work')">Your work?</button>
+    <button class="quick-btn" onclick="quickSend('What do you do on weekends?')">Weekends?</button>
+    <button class="quick-btn" onclick="quickSend('What is the weather like today?')">Weather?</button>
+    <button class="quick-btn" onclick="quickSend('Can you recommend a good food?')">Food recs?</button>
+  </div>
+
+  <div class="chat-area" id="chat"></div>
+
+  <div class="status">
+    <div class="dot" id="dot"></div>
+    <span id="status-text">Chọn giọng và bắt đầu trò chuyện!</span>
+  </div>
+
+  <div class="input-row">
+    <textarea id="input" placeholder="Type your message in English..." rows="1"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();send()}"
+      oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+    <button class="send-btn" id="send-btn" onclick="send()">Send ↑</button>
+  </div>
+
+</main>
+
+<footer>Powered by Claude AI · Luyện nghe tiếng Anh với 5 giọng điệu thế giới</footer>
+
+<script>
+const ACCENTS = {
+  indian: {
+    flag: '🇮🇳',
+    name: 'Indian English',
+    tip: '🇮🇳 <strong>Indian English:</strong> Hay nói "only" cuối câu, "isn\'t it?" xác nhận, phát âm rõ từng âm tiết, rất lịch sự và nhiệt tình.',
+    voiceLang: 'en-IN',
+    system: `You are a friendly person from India speaking Indian English. Characteristics:
+- Add "only", "na", "no?" at end of sentences naturally
+- Use "isn't it?" and "isn't?" for confirmation  
+- Use "itself" for emphasis: "the problem itself is easy only"
+- Say "kindly", "do the needful", "revert back", "prepone"
+- Formal but very warm and enthusiastic
+- Speak with clear enunciation of each syllable
+- Keep replies SHORT: 2-3 sentences max for conversation practice
+- NEVER break character`
+  },
+  singlish: {
+    flag: '🇸🇬',
+    name: 'Singlish',
+    tip: '🇸🇬 <strong>Singlish:</strong> Dùng "lah", "leh", "mah", "can?", "got", bỏ "is/are/the", rất ngắn gọn và thẳng thắn.',
+    voiceLang: 'en-SG',
+    system: `You are a Singaporean speaking Singlish. Characteristics:
+- Add "lah", "leh", "lor", "mah", "sia", "what" at end of sentences
+- Drop articles and linking verbs: "I go shop buy" not "I'm going to the shop to buy"
+- Use "got" for have/exist: "got problem or not?", "no got lah"
+- "Can" means yes/ok, "cannot" means no
+- Mix: "alamak", "shiok", "kiasu", "bojio"
+- "Yeah nah" = no, "nah yeah" = yes
+- Very direct, casual, friendly, SHORT replies 2-3 sentences
+- NEVER break character`
+  },
+  british: {
+    flag: '🇬🇧',
+    name: 'British English',
+    tip: '🇬🇧 <strong>British English:</strong> Dùng "quite", "rather", "lovely", "cheers", "brilliant", "I\'m afraid", lịch sự và hài hước nhẹ nhàng.',
+    voiceLang: 'en-GB',
+    system: `You are a British person speaking Received Pronunciation English. Characteristics:
+- Use "quite", "rather", "lovely", "brilliant", "cheers", "ta", "blimey", "crikey"
+- "I'm afraid" instead of "unfortunately"
+- Use "shall", "shan't", "mustn't" naturally
+- "Flat" not apartment, "lift" not elevator, "biscuit" not cookie, "rubbish" not garbage
+- Self-deprecating understated humour, very polite
+- "Terribly sorry", "frightfully good", "jolly good"
+- Short elegant replies 2-3 sentences
+- NEVER break character`
+  },
+  american: {
+    flag: '🇺🇸',
+    name: 'American English',
+    tip: '🇺🇸 <strong>American English:</strong> Dùng "awesome", "totally", "for sure", "you guys", "gonna", "wanna", năng động và thân thiện.',
+    voiceLang: 'en-US',
+    system: `You are an American speaking casual American English. Characteristics:
+- Use "awesome", "totally", "for sure", "you guys", "y'all", "dude"
+- Contractions always: "gonna", "wanna", "gotta", "kinda", "sorta", "dunno"
+- Enthusiastic: "Oh man!", "No way!", "That's so cool!", "For real?"
+- "Apartment", "elevator", "cookie", "trash", "fries"
+- Direct, friendly, upbeat, positive energy
+- Short energetic replies 2-3 sentences
+- NEVER break character`
+  },
+  australian: {
+    flag: '🇦🇺',
+    name: 'Australian English',
+    tip: '🇦🇺 <strong>Australian English:</strong> Dùng "mate", "arvo", "no worries", "heaps", "reckon", rất thoải mái và thân thiện.',
+    voiceLang: 'en-AU',
+    system: `You are an Australian speaking Aussie English. Characteristics:
+- Use "mate", "no worries", "reckon", "heaps", "ripper", "fair dinkum", "strewth"
+- Shorten everything: "arvo" (afternoon), "brekkie" (breakfast), "servo" (service station), "sunnies" (sunglasses), "maccas" (McDonald's)
+- "Yeah nah" (polite no), "nah yeah" (yes definitely)
+- "Crikey!", "Too easy!", "She'll be right!", "Good on ya!"
+- Very laid back, casual, self-deprecating humour
+- Short relaxed replies 2-3 sentences
+- NEVER break character`
+  }
+};
+
+let current = 'indian';
+let history = [];
+
+function selectAccent(el, accent) {
+  document.querySelectorAll('.accent-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  current = accent;
+  document.getElementById('tip-box').innerHTML = ACCENTS[accent].tip;
+  history = [];
+  document.getElementById('chat').innerHTML = '';
+  addMsg('ai', `${ACCENTS[accent].flag} Hello! I'm now speaking ${ACCENTS[accent].name}. Start chatting with me!`);
+  setStatus(`Đang chat với ${ACCENTS[accent].name}`, false);
+}
+
+function setStatus(text, loading) {
+  document.getElementById('status-text').textContent = text;
+  document.getElementById('dot').className = 'dot' + (loading ? ' loading' : '');
+}
+
+function addMsg(role, text, speak) {
+  const chat = document.getElementById('chat');
+  const wrap = document.createElement('div');
+  wrap.className = `msg ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = role === 'ai' ? ACCENTS[current].flag : '🧑';
+
+  const right = document.createElement('div');
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.textContent = text;
+  right.appendChild(bubble);
+
+  if (speak && 'speechSynthesis' in window) {
+    const btn = document.createElement('button');
+    btn.className = 'speak-btn';
+    btn.innerHTML = '▶ Read aloud';
+    btn.onclick = () => speakText(text);
+    right.appendChild(btn);
+  }
+
+  if (role === 'ai') {
+    wrap.appendChild(avatar);
+    wrap.appendChild(right);
+  } else {
+    wrap.appendChild(right);
+    wrap.appendChild(avatar);
+  }
+
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function addTyping() {
+  const chat = document.getElementById('chat');
+  const wrap = document.createElement('div');
+  wrap.className = 'msg ai';
+  wrap.id = 'typing-indicator';
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = ACCENTS[current].flag;
+  const dots = document.createElement('div');
+  dots.className = 'typing';
+  dots.innerHTML = '<span></span><span></span><span></span>';
+  wrap.appendChild(avatar);
+  wrap.appendChild(dots);
+  chat.appendChild(wrap);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function removeTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function speakText(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  const lang = ACCENTS[current].voiceLang;
+  const voices = window.speechSynthesis.getVoices();
+  const match = voices.find(v => v.lang === lang)
+    || voices.find(v => v.lang.startsWith(lang.split('-')[0] + '-'))
+    || voices.find(v => v.lang.startsWith('en'));
+  if (match) utt.voice = match;
+  utt.lang = lang;
+  utt.rate = 0.88;
+  window.speechSynthesis.speak(utt);
+}
+
+function quickSend(text) {
+  document.getElementById('input').value = text;
+  send();
+}
+
+async function send() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  document.getElementById('send-btn').disabled = true;
+
+  addMsg('user', text);
+  history.push({ role: 'user', content: text });
+  addTyping();
+  setStatus('Đang trả lời...', true);
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 1000,
+        system: ACCENTS[current].system,
+        messages: history
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.[0]?.text || 'Sorry, something went wrong!';
+    history.push({ role: 'assistant', content: reply });
+    removeTyping();
+    addMsg('ai', reply, true);
+    setStatus(`Chat với ${ACCENTS[current].name} — bấm "Read aloud" để nghe!`, false);
+  } catch(e) {
+    removeTyping();
+    addMsg('ai', 'Could not connect. Please check your API key and try again.');
+    setStatus('Lỗi kết nối!', false);
+  }
+
+  document.getElementById('send-btn').disabled = false;
+  input.focus();
+}
+
+window.speechSynthesis?.addEventListener?.('voiceschanged', () => {});
+addMsg('ai', `${ACCENTS[current].flag} Hello! Welcome to Accent Trainer. Choose an accent above and start chatting — press "Read aloud" to hear the voice!`);
+</script>
+</body>
+</html>
